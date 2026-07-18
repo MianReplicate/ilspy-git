@@ -5,7 +5,7 @@ pkgdesc=".NET Decompiler with support for PDB generation, ReadyToRun, Metadata (
 arch=('any')
 url="https://github.com/icsharpcode/ILSpy"
 depends=('dotnet-runtime')
-makedepends=('git' 'dotnet-sdk-preview-bin' 'powershell' 'imagemagick')
+makedepends=('git' 'dotnet-sdk-preview-bin' 'powershell-bin' 'imagemagick')
 license=('MIT')
 source=("git+https://github.com/icsharpcode/ILSpy")
 sha512sums=('SKIP')
@@ -20,7 +20,16 @@ pkgver() {
 # `ILSpy/ILSpy.csproj` is the `ilspy` project
 build() {
 	cd "$srcdir/ILSpy"
-	dotnet publish -c Release -o ../publish --no-self-contained ILSpy/ILSpy.csproj
+	
+	# Map Arch architecture ($CARCH) to .NET Runtime Identifier (RID)
+    case "$CARCH" in
+        x86_64)  _rid="linux-x64" ;;
+        aarch64) _rid="linux-arm64" ;;
+        armv7h)  _rid="linux-arm" ;;
+        *)       echo "Unsupported architecture"; exit 1 ;;
+    esac
+        
+	dotnet publish -c Release -r "$_rid" -o ../publish --no-self-contained ILSpy/ILSpy.csproj
 }
 
 package() {

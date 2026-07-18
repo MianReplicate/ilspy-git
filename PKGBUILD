@@ -4,7 +4,7 @@ pkgrel=1
 pkgdesc=".NET Decompiler with support for PDB generation, ReadyToRun, Metadata (&more)"
 arch=('any')
 url="https://github.com/icsharpcode/ILSpy"
-depends=('dotnet-runtime')
+depends=('dotnet-runtime-10.0')
 makedepends=('git' 'dotnet-sdk-preview-bin' 'powershell' 'imagemagick')
 license=('MIT')
 source=("git+https://github.com/icsharpcode/ILSpy")
@@ -13,7 +13,7 @@ options=(!debug)
 
 pkgver() {
     cd "$srcdir/ILSpy"
-		git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+    git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 # https://github.com/icsharpcode/ILSpy?tab=readme-ov-file#how-to-build
@@ -23,10 +23,10 @@ build() {
 	
 	# Map Arch architecture ($CARCH) to .NET Runtime Identifier (RID)
     case "$CARCH" in
-        x86_64)  _rid="linux-x64" ;;
-        aarch64) _rid="linux-arm64" ;;
-        armv7h)  _rid="linux-arm" ;;
-        *)       echo "Unsupported architecture"; exit 1 ;;
+    x86_64)  _rid="linux-x64" ;;
+    aarch64) _rid="linux-arm64" ;;
+    armv7h)  _rid="linux-arm" ;;
+    *)       echo "Unsupported architecture"; exit 1 ;;
     esac
         
 	dotnet publish -c Release -r "$_rid" -o ../publish --no-self-contained ILSpy/ILSpy.csproj
@@ -46,7 +46,6 @@ package() {
 	install -Dm644 \
         "$srcdir/ILSpy/ILSpy/Assets/ILSpy.png" \
         "$pkgdir/usr/share/icons/hicolor/48x48/apps/ilspy.png"
-    
     install -Dm644 /dev/stdin \
         "$pkgdir/usr/share/applications/ilspy.desktop" <<EOF
 [Desktop Entry]
